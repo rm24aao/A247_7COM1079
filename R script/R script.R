@@ -40,5 +40,16 @@ head(selected_columns)  # Display the first few rows
    max_price <- max(dataset$Price, na.rm = TRUE)
    y_ticks <- seq(0, max_price, by = 1e6)  
    axis(2, at = y_ticks, labels = y_ticks / 1e6, las = 2)  
+   # Histogram for Rooms
+   hist(dataset$Rooms,
+        main = "Histogram of Number of Rooms",
+        xlab = "Number of Rooms",
+        ylab = "Frequency",
+        col = "lightgreen",  # Color of the bars
+        border = "white",    # Bar border color
+        breaks = seq(0.5, 10.5, by = 1)) # Ensures each room number gets its own bin
+   
+   # Adding gridlines for better readability
+   grid(nx = NA, ny = NULL, col = "gray", lty = "dotted", lwd = 1)
    
    
