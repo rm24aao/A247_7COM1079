@@ -17,7 +17,7 @@ head(selected_columns)  # Display the first few rows
    
    
    
-   dataset <- read.csv("melb_data.csv")
+   dataset <- read.csv("melb_data.csv") #the whole dataset
    
    
    plot(dataset$Rooms, dataset$Price,
