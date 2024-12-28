@@ -1,0 +1,5 @@
+sum(is.na(data))
+
+data_clean <- na.omit(data)
+
+data$Price[is.na(data$Price)] <- median(data$Price, na.rm = TRUE)
