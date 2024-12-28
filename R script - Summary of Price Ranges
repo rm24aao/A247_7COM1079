@@ -1,0 +1,7 @@
+library(dplyr)
+
+data %>%
+  mutate(PriceRange = cut(Price, breaks = c(0, 500000, 1000000, 2000000, 5000000, 10000000),
+                          labels = c("0-500k", "500k-1M", "1M-2M", "2M-5M", "5M-10M"))) %>%
+  group_by(PriceRange) %>%
+  summarise(Count = n())
