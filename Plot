@@ -1,0 +1,24 @@
+# Load necessary libraries
+library(ggplot2)
+
+# Assuming 'data' is your dataset
+# Ensure Price and Method are in appropriate formats
+data$Price <- as.numeric(data$Price)
+data$Method <- as.factor(data$Method)
+
+# Boxplot of Price by Sale Method
+ggplot(data, aes(x = Method, y = Price)) +
+  geom_boxplot(fill = "lightblue", color = "black") +
+  theme_minimal() +
+  labs(title = "Price Distribution by Sale Method", x = "Sale Method", y = "Price") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Ensure Rooms is a factor and Price is numeric
+data$Rooms <- as.factor(data$Rooms)
+
+# Boxplot of Price by Rooms
+ggplot(data, aes(x = Rooms, y = Price)) +
+  geom_boxplot(fill = "purple", color = "black") +
+  theme_minimal() +
+  labs(title = "Price Distribution by Number of Rooms", x = "Number of Rooms", y = "Price") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
