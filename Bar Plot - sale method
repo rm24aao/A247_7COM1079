@@ -1,0 +1,5 @@
+# Bar plot of Sale Method Frequency
+ggplot(data, aes(x = Method)) +
+  geom_bar(fill = "orange", color = "black") +
+  theme_minimal() +
+  labs(title = "Sale Method Frequency", x = "Sale Method", y = "Count")
