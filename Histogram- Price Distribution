@@ -1,0 +1,6 @@
+library(ggplot2)
+
+ggplot(data, aes(x = Price)) +
+  geom_histogram(binwidth = 50000, fill = "blue", color = "black", alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "Price Distribution", x = "Price", y = "Count")
