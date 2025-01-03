@@ -1,0 +1,40 @@
+# Load necessary libraries
+library(dplyr)
+library(ggplot2)
+
+# Read in the dataset (assuming it's a CSV file)
+data <- read.csv("melb_data.csv")
+
+# Check the structure of the data
+str(data)
+
+# Clean up data if necessary
+# For example, ensuring numeric columns are correctly formatted
+data$Price <- as.numeric(data$Price)
+data$Rooms <- as.factor(data$Rooms)
+data$Method <- as.factor(data$Method)
+data$Suburb <- as.factor(data$Suburb)
+
+# Summary statistics
+summary(data)
+
+# Count of unique values in specific columns
+table(data$Suburb)
+table(data$Method)
+
+# Filter properties with a specific price range
+filtered_data <- data %>%
+  filter(Price >= 1000000 & Price <= 2000000)
+
+# Create a plot of price distribution by suburb
+ggplot(data, aes(x = Price, fill = Suburb)) +
+  geom_histogram(binwidth = 50000, position = "dodge") +
+  theme_minimal() +
+  labs(title = "Price Distribution by Suburb", x = "Price", y = "Count")
+
+# Create a summary of sales method frequency
+sales_method_summary <- data %>%
+  group_by(Method) %>%
+  summarise(Count = n())
+
+print(sales_method_summary)
