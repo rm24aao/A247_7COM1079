@@ -26,3 +26,5 @@ ggplot(auction_df, aes(x = Suburb, y = Count, fill = Method)) +
     legend.position = "top"
   ) +
   scale_fill_brewer(palette = "Set2")
+
+ggsave("auction_proportions_plot.png", width = 12, height = 8, dpi = 300)
