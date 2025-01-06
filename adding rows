@@ -1,1 +1,0 @@
-head(auction_df)  # View the first few rows of the dataframe
