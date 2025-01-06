@@ -38,3 +38,29 @@ merged_data <- merged_data %>%
 
 # Display summary table
 print(merged_data)
+# Perform chi-squared test
+chisq_test_data <- dataset %>%
+  filter(Method %in% c("S", "PI", "SP")) %>%
+  count(Suburb, Method) %>%
+  spread(Method, n, fill = 0)
+
+# Convert to matrix format
+chi_matrix <- chisq_test_data %>% select(-Suburb) %>% as.matrix()
+chi_test_result <- chisq.test(chi_matrix)
+
+# Print chi-squared test result
+print(chi_test_result)
+
+# Stacked bar plot
+auction_plot <- dataset %>%
+  filter(Method %in% c("S", "PI", "SP")) %>%
+  ggplot(aes(x = Suburb, fill = Method)) +
+  geom_bar(position = "fill") +
+  labs(
+    title = "Proportion of Properties Sold by Method across Suburbs",
+    x = "Suburb",
+    y = "Proportion",
+    fill = "Sale Method"
+  ) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+print(auction_plot)
