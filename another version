@@ -14,7 +14,7 @@ colnames(auction_df) <- c("Suburb", "Method", "Count")
 # Create Plot
 ggplot(auction_df, aes(x = Suburb, y = Count, fill = Method)) +
   geom_bar(stat = "identity", position = "stack") +
-  theme_minimal() +
+  theme_minimal() + 
   labs(
     title = "Proportions of Properties Sold by Auction Across Suburbs",
     x = "Suburb",
