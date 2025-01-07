@@ -1,66 +1,48 @@
-# Load required libraries
-if (!require(dplyr)) install.packages("dplyr")
-if (!require(ggplot2)) install.packages("ggplot2")
+# Install the tidyr package if it's missing
+install.packages("tidyr")
 
-library(dplyr)
+# Load necessary libraries
 library(ggplot2)
+library(dplyr)
+library(tidyr)
 
 # Load the dataset
-dataset <- read.csv("melb_data.csv")
+data <- read.csv("melb_data.csv")
 
-# Inspect the dataset
-str(dataset)
-head(dataset)
+# Filter data for relevant columns and auction methods
+filtered_data <- data %>%
+  filter(Method %in% c('S', 'SP', 'PI'))
 
-# Filter relevant columns: "Suburb" and "Method" (assuming auction = "S")
-selected_data <- dataset %>% select(Suburb, Method)
-
-# Check unique values in "Method" to understand sale methods
-unique(selected_data$Method)
-
-# Filter rows where the method indicates an auction ("S" = sold at auction)
-selected_data <- selected_data %>%
-  filter(Method == "S") %>%
-  group_by(Suburb) %>%
-  summarize(Auction_Count = n())
-
-# Join with total sales per suburb
-total_sales <- dataset %>%
-  group_by(Suburb) %>%
-  summarize(Total_Sales = n())
-
-# Merge auction counts with total sales
-merged_data <- left_join(selected_data, total_sales, by = "Suburb")
-
-# Calculate proportion of auctions for each suburb
-merged_data <- merged_data %>%
-  mutate(Proportion_Auction = Auction_Count / Total_Sales)
-
-# Display summary table
-print(merged_data)
-# Perform chi-squared test
-chisq_test_data <- dataset %>%
-  filter(Method %in% c("S", "PI", "SP")) %>%
+# Group data by Suburb and Method
+grouped_data <- filtered_data %>%
   count(Suburb, Method) %>%
-  spread(Method, n, fill = 0)
+  pivot_wider(names_from = Method, values_from = n, values_fill = list(n = 0))
 
-# Convert to matrix format
-chi_matrix <- chisq_test_data %>% select(-Suburb) %>% as.matrix()
-chi_test_result <- chisq.test(chi_matrix)
+# Sort by total sales in descending order and select the top 20 suburbs
+top_suburbs <- grouped_data %>%
+  mutate(Total = rowSums(grouped_data[, -1])) %>%
+  arrange(desc(Total)) %>%
+  head(20) %>%
+  select(-Total)
 
-# Print chi-squared test result
-print(chi_test_result)
+# Create a stacked bar plot
+ggplot(top_suburbs, aes(x = Suburb)) +
+  geom_bar(aes(y = `S`, fill = "Sold at Auction (S)"), stat = "identity", position = "stack", color = "black") +
+  geom_bar(aes(y = `SP`, fill = "Sold Prior (SP)"), stat = "identity", position = "stack", color = "black") +
+  geom_bar(aes(y = `PI`, fill = "Passed In (PI)"), stat = "identity", position = "stack", color = "black") +
+  scale_fill_manual(values = c("Sold at Auction (S)" = "#4CAF50", 
+                               "Sold Prior (SP)" = "#FFC107", 
+                               "Passed In (PI)" = "#2196F3")) +
+  labs(title = "Auction vs. Other Sale Methods in Top 20 Suburbs", 
+       x = "Suburb", 
+       y = "Number of Properties Sold", 
+       fill = "Sale Method") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 10)) +
+  theme_minimal()
 
-# Stacked bar plot
-auction_plot <- dataset %>%
-  filter(Method %in% c("S", "PI", "SP")) %>%
-  ggplot(aes(x = Suburb, fill = Method)) +
-  geom_bar(position = "fill") +
-  labs(
-    title = "Proportion of Properties Sold by Method across Suburbs",
-    x = "Suburb",
-    y = "Proportion",
-    fill = "Sale Method"
-  ) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-print(auction_plot)
+# Save the plot as an image file
+ggsave("stacked_bar_plot.png", dpi = 300)
+
